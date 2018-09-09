@@ -59,14 +59,11 @@ public class RoverOpMode extends OpMode {
         leftWheel.setPower(gamepad1.left_stick_y * -1); //may need to be flipped
 
         //Four Wheel Drive
-        if (gamepad1.right_stick_y > 0){ //precaution
-            brightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
-            frightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
-        }
-        if (gamepad1.left_stick_y > 0) { //precaution
-            bleftWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
-            brightWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
-        }
+        brightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
+        frightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
+        bleftWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
+        brightWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
+
         //servo basic code
         if(gamepad1.a) //activate
             collector.setPosition(0);
