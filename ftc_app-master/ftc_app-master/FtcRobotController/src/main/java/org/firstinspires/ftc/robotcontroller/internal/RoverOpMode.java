@@ -62,7 +62,7 @@ public class RoverOpMode extends OpMode {
         brightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
         frightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
         bleftWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
-        brightWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
+        fleftWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
 
         //servo basic code
         if(gamepad1.a) //activate
