@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
 /**
  * Created by david on 5/14/2018.
  */
@@ -13,7 +18,6 @@ public class RoverOpMode extends OpMode {
     final int ROTATION_DISTANCE = 0; //Distance travelled from one rotation (cm)
 
 
-    int currentPos;
     //Four Wheel Drive
     DcMotor fleftWheel;
     DcMotor frightWheel;
@@ -24,6 +28,15 @@ public class RoverOpMode extends OpMode {
     DcMotor leftSlide;
     DcMotor rightSlide;
 
+    //Fly Wheels
+    DcMotor leftFly;
+    DcMotor rightFly;
+
+    //Climbing Servo
+    Servo latch;
+
+    //Fly Wheel Hinge Servo
+    Servo hinge;
 
     @Override
     public void init(){
@@ -36,16 +49,44 @@ public class RoverOpMode extends OpMode {
         leftSlide = hardwareMap.dcMotor.get("Left Slide");
         rightSlide = hardwareMap.dcMotor.get("Right slide");
 
+        leftFly = hardwareMap.dcMotor.get("Left Fly Wheel");
+        rightFly = hardwareMap.dcMotor.get("Right Fly Wheel");
+
+        latch = hardwareMap.servo.get("Climb Latch");
+
+        hinge = hardwareMap.servo.get("Fly Wheel Hinge");
     }
 
     public void init_loop(){
-        //Four Wheel Drive
-        fleftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fleftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        brightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bleftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //Four Wheel Drive Reset
+        fleftWheel.setMode(STOP_AND_RESET_ENCODER);
+        frightWheel.setMode(STOP_AND_RESET_ENCODER);
+        brightWheel.setMode(STOP_AND_RESET_ENCODER);
+        bleftWheel.setMode(STOP_AND_RESET_ENCODER);
+
+        //Four Wheel Drive Park Rules (Precaution, may not be necessary)
+        fleftWheel.setZeroPowerBehavior(BRAKE);
+        frightWheel.setZeroPowerBehavior(BRAKE);
+        bleftWheel.setZeroPowerBehavior(BRAKE);
+        brightWheel.setZeroPowerBehavior(BRAKE);
+
+        //Fly Wheel Reset
+        leftFly.setMode(STOP_AND_RESET_ENCODER);
+        rightFly.setMode(STOP_AND_RESET_ENCODER);
+
+        //Lift Mechanism Initialization
+        leftSlide.setMode(RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(RUN_WITHOUT_ENCODER);
+
+        //Fly Wheels Initialization
+        leftFly.setMode(RUN_USING_ENCODER);  //Encoders may not be needed
+        rightFly.setMode(RUN_USING_ENCODER); //Encoders may not be needed
+
+        //Four Wheel Drive Encoder Initialization
+        fleftWheel.setMode(RUN_USING_ENCODER);
+        frightWheel.setMode(RUN_USING_ENCODER);
+        brightWheel.setMode(RUN_USING_ENCODER);
+        bleftWheel.setMode(RUN_USING_ENCODER);
 
     }
     public void loop(){
@@ -60,56 +101,142 @@ public class RoverOpMode extends OpMode {
             rightSlide.setPower(.8);
             leftSlide.setPower(.8);
         }
-        if(gamepad1.left_bumper) {
+
+        if(gamepad1.left_bumper){
             rightSlide.setPower(-.8);
             leftSlide.setPower(-.8);
         }
+
+        if(gamepad1.dpad_up){
+            rightFly.setPower(1);
+            leftFly.setPower(1);
+        }
+
+        if(gamepad1.dpad_down){
+            rightFly.setPower(-1);
+            leftFly.setPower(-1);
+        }
+
+        //Debugging & encoder measuring purposes
         telemetry.addData("Front-Left Wheel", fleftWheel.getCurrentPosition());
         telemetry.addData("Front-Right Wheel", frightWheel.getCurrentPosition());
+        telemetry.addData("Back-Left Wheel", bleftWheel.getCurrentPosition());
+        telemetry.addData("Back-Right Wheel", brightWheel.getCurrentPosition());
     }
 
     /**
      * Sets target position for motors to current postion
      */
     public void stopMotors(){
-        int leftTarget = getLeftTarget(0);
-        int rightTarget = getRightTarget(0);
-        fleftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fleftWheel.setTargetPosition(leftTarget);
-        frightWheel.setTargetPosition(rightTarget);
+
+        fleftWheel.setPower(0);
+        frightWheel.setPower(0);
+        bleftWheel.setPower(0);
+        brightWheel.setPower(0);
+
     }
 
     /**
-     * Sets target position relative to distance wanted to travel
+     * Drives forward a specific amount (in centimeters)
      * @param cm is the distance requested in centimeters
      */
     public void moveForward(int cm){
-        int leftTarget = getLeftTarget(cm);
-        int rightTarget = getRightTarget(cm);
+
+        int fleftTarget = getFrontLeftTarget(cm);
+        int frightTarget = getFrontRightTarget(cm);
+        int bleftTarget = getBackLeftTarget(cm);
+        int brightTarget = getBackRightTarget(cm);
+
+        startDrive(fleftTarget, frightTarget, bleftTarget, brightTarget, .75);
+    }
+
+
+    /**
+     * Sets encoders to run to target position located in @param.
+     * @param fleftTarget front left wheel target
+     * @param frightTarget front right wheel target
+     * @param bleftTarget back left wheel target
+     * @param brightTarget back right wheel target
+     */
+    public void startDrive(int fleftTarget, int frightTarget, int bleftTarget, int brightTarget, double speed){
+
         fleftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fleftWheel.setTargetPosition(leftTarget);
-        frightWheel.setTargetPosition(rightTarget);
+        bleftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        brightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        fleftWheel.setTargetPosition(fleftTarget);
+        fleftWheel.setPower(speed);
+
+        frightWheel.setTargetPosition(frightTarget);
+        frightWheel.setPower(speed);
+
+        bleftWheel.setTargetPosition(bleftTarget);
+        bleftWheel.setPower(speed);
+
+        brightWheel.setTargetPosition(brightTarget);
+        brightWheel.setPower(speed);
+
+        while(isDriving()){
+            //Filler for motors to run
+        }
+
+        stopMotors();
     }
 
     /**
-     * Calculates target position for left motor by dividing the wanted distance by the distance per
+     * Calculates target position for front-left motor by dividing the wanted distance by the distance per
      * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
      * @param cm is the distance it needs to travel in centimeters
      * @return the target position in reference to motor ticks
      */
-    public int getLeftTarget(int cm){
+    public int getFrontLeftTarget(int cm){
+
         return ((cm/ROTATION_DISTANCE)*ROTATION_TICKS)+fleftWheel.getCurrentPosition();
+
     }
     /**
-     * Calculates target position for right motor by dividing the wanted distance by the distance per
+     * Calculates target position for front-right motor by dividing the wanted distance by the distance per
      * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
      * @param cm is the distance it needs to travel in centimeters
      * @return the target position in reference to motor ticks
      */
-    public int getRightTarget(int cm){
+    public int getFrontRightTarget(int cm){
+
         return ((cm/ROTATION_DISTANCE)*ROTATION_TICKS)+frightWheel.getCurrentPosition();
+
+    }
+    /**
+     * Calculates target position for back-right motor by dividing the wanted distance by the distance per
+     * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
+     * @param cm is the distance it needs to travel in centimeters
+     * @return the target position in reference to motor ticks
+     */
+    public int getBackRightTarget(int cm){
+
+        return ((cm/ROTATION_DISTANCE)*ROTATION_TICKS)+brightWheel.getCurrentPosition();
+
+    }
+    /**
+     * Calculates target position for back-left motor by dividing the wanted distance by the distance per
+     * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
+     * @param cm is the distance it needs to travel in centimeters
+     * @return the target position in reference to motor ticks
+     */
+    public int getBackLeftTarget(int cm){
+
+        return ((cm/ROTATION_DISTANCE)*ROTATION_TICKS)+bleftWheel.getCurrentPosition();
+
+    }
+
+    /**
+     * Checks is motors are currently trying to reach a target
+     * @return true if motors are in active target run
+     */
+    public boolean isDriving(){
+
+        return fleftWheel.isBusy() && frightWheel.isBusy() && bleftWheel.isBusy() && brightWheel.isBusy();
+
     }
 
 
