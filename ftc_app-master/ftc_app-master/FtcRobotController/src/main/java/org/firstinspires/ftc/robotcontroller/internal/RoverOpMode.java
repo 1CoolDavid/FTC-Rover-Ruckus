@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.robotcontroller.internal;
 
+import android.webkit.DownloadListener;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,6 +18,14 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 public class RoverOpMode extends OpMode {
     final int ROTATION_TICKS = 0; //Ticks per rotation (number that appears)
     final int ROTATION_DISTANCE = 0; //Distance travelled from one rotation (cm)
+
+    /*public enum State{
+        Up,
+        Down,
+        Left,
+        Right,
+    }*/
+    //Reference for later
 
 
     //Four Wheel Drive
@@ -139,15 +149,16 @@ public class RoverOpMode extends OpMode {
     /**
      * Drives forward a specific amount (in centimeters)
      * @param cm is the distance requested in centimeters
+     * @param speed is how fast the motors will spin until distance is reached
      */
-    public void moveForward(int cm){
+    public void moveForward(int cm, double speed){
 
         int fleftTarget = getFrontLeftTarget(cm);
         int frightTarget = getFrontRightTarget(cm);
         int bleftTarget = getBackLeftTarget(cm);
         int brightTarget = getBackRightTarget(cm);
 
-        startDrive(fleftTarget, frightTarget, bleftTarget, brightTarget, .75);
+        startDrive(fleftTarget, frightTarget, bleftTarget, brightTarget, speed);
     }
 
 
