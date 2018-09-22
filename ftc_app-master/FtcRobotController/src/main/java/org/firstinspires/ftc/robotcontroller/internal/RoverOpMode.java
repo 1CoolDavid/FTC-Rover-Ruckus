@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.robotcontroller.internal;
 
-import android.webkit.DownloadListener;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,8 +15,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 
 public class RoverOpMode extends OpMode {
-    final int ROTATION_TICKS = 0; //Ticks per rotation (number that appears)
-    final int ROTATION_DISTANCE = 0; //Distance travelled from one rotation (cm)
+
 
     //Four Wheel Drive
     DcMotor brightWheel;
@@ -29,8 +25,6 @@ public class RoverOpMode extends OpMode {
     DcMotor leftSlide;
     DcMotor rightSlide;
 
-    //Color Sensor
-    ColorSensor goldFinder;
 
     //Fly Wheels
     DcMotor leftFly;
@@ -52,8 +46,6 @@ public class RoverOpMode extends OpMode {
         leftSlide = hardwareMap.dcMotor.get("Left Slide");
         rightSlide = hardwareMap.dcMotor.get("Right slide");
 
-        goldFinder = hardwareMap.colorSensor.get("Gold Finder");
-
         leftFly = hardwareMap.dcMotor.get("Left Fly Wheel");
         rightFly = hardwareMap.dcMotor.get("Right Fly Wheel");
 
@@ -61,6 +53,7 @@ public class RoverOpMode extends OpMode {
         basket = hardwareMap.servo.get("Climb Basket");
 
         hinge = hardwareMap.servo.get("Fly Wheel Hinge");
+
     }
 
     public void init_loop(){
@@ -73,23 +66,28 @@ public class RoverOpMode extends OpMode {
         bleftWheel.setZeroPowerBehavior(BRAKE);
         brightWheel.setZeroPowerBehavior(BRAKE);
 
-        //Fly Wheel Reset
-        leftFly.setMode(STOP_AND_RESET_ENCODER);
-        rightFly.setMode(STOP_AND_RESET_ENCODER);
+        //Lift Mechanism Reset
+        leftSlide.setMode(STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(STOP_AND_RESET_ENCODER);
 
-        //Lift Mechanism Initialization
-        leftSlide.setMode(RUN_WITHOUT_ENCODER);
-        rightSlide.setMode(RUN_WITHOUT_ENCODER);
+        //Park Rules (Precaution, may not be necessary)
+        leftSlide.setZeroPowerBehavior(BRAKE);
+        rightSlide.setZeroPowerBehavior(BRAKE);
 
         //Fly Wheels Initialization
-        leftFly.setMode(RUN_USING_ENCODER);  //Encoders may not be needed
-        rightFly.setMode(RUN_USING_ENCODER); //Encoders may not be needed
+        leftFly.setMode(RUN_WITHOUT_ENCODER);
+        rightFly.setMode(RUN_WITHOUT_ENCODER);
 
         //Encoder Initialization
         brightWheel.setMode(RUN_USING_ENCODER);
         bleftWheel.setMode(RUN_USING_ENCODER);
 
+        //Encoder Initialization
+        leftSlide.setMode(RUN_USING_ENCODER);
+        rightSlide.setMode(RUN_USING_ENCODER);
+
     }
+
     public void loop(){
 
         //Four Wheel Drive
@@ -120,89 +118,5 @@ public class RoverOpMode extends OpMode {
         telemetry.addData("Back-Left Wheel", bleftWheel.getCurrentPosition());
         telemetry.addData("Back-Right Wheel", brightWheel.getCurrentPosition());
     }
-
-    /**
-     * Sets target position for motors to current postion
-     */
-    public void stopMotors(){
-
-        bleftWheel.setPower(0);
-        brightWheel.setPower(0);
-
-    }
-
-    /**
-     * Drives forward a specific amount (in centimeters)
-     * @param cm is the distance requested in centimeters
-     * @param speed is how fast the motors will spin until distance is reached
-     */
-    public void moveForward(int cm, double speed){
-
-        int bleftTarget = getBackLeftTarget(cm);
-        int brightTarget = getBackRightTarget(cm);
-
-        startDrive(bleftTarget, brightTarget, speed);
-    }
-
-
-    /**
-     * Sets encoders to run to target position located in @param.
-     * //@param fleftTarget front left wheel target
-     * //@param frightTarget front right wheel target
-     * @param bleftTarget back left wheel target
-     * @param brightTarget back right wheel target
-     */
-    public void startDrive(int bleftTarget, int brightTarget, double speed){
-
-        bleftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        brightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        bleftWheel.setTargetPosition(bleftTarget);
-        bleftWheel.setPower(speed);
-
-        brightWheel.setTargetPosition(brightTarget);
-        brightWheel.setPower(speed);
-
-        while(isDriving()){
-            //Filler for motors to run
-        }
-
-        stopMotors();
-    }
-
-    /**
-     * Calculates target position for back-right motor by dividing the wanted distance by the distance per
-     * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
-     * @param cm is the distance it needs to travel in centimeters
-     * @return the target position in reference to motor ticks
-     */
-    public int getBackRightTarget(int cm){
-
-        return ((cm/ROTATION_DISTANCE)*ROTATION_TICKS)+brightWheel.getCurrentPosition();
-
-    }
-    /**
-     * Calculates target position for back-left motor by dividing the wanted distance by the distance per
-     * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
-     * @param cm is the distance it needs to travel in centimeters
-     * @return the target position in reference to motor ticks
-     */
-    public int getBackLeftTarget(int cm){
-
-        return ((cm/ROTATION_DISTANCE)*ROTATION_TICKS)+bleftWheel.getCurrentPosition();
-
-    }
-
-    /**
-     * Checks is motors are currently trying to reach a target
-     * @return true if motors are in active target run
-     */
-    public boolean isDriving(){
-
-        return bleftWheel.isBusy() && brightWheel.isBusy();
-
-    }
-
-
 
 }
