@@ -16,6 +16,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 public class RoverOpMode extends OpMode {
 
+    //TODO: Servo Controls - Latch, basket, and hinge
 
     //Four Wheel Drive
     DcMotor brightWheel;
@@ -113,6 +114,7 @@ public class RoverOpMode extends OpMode {
             rightFly.setPower(1);
             leftFly.setPower(1);
         }
+
 
         //Debugging & encoder measuring purposes
         telemetry.addData("Back-Left Wheel", bleftWheel.getCurrentPosition());

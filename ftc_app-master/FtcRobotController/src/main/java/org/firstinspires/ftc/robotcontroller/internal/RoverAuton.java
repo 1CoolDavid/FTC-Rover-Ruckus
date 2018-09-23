@@ -13,10 +13,13 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 //Test class for now
 public class RoverAuton extends OpMode{
 
-    final int WHEEL_ROTATION_TICKS = 0; //Ticks per wheel rotation (number that appears)
-    final int WHEEL_ROTATION_DISTANCE = 0; //Distance travelled from one wheel rotation (cm)
+    //TODO: Servo auton - latch
+
+
+    final int WHEEL_ROTATION_TICKS = 1440; //Ticks per wheel rotation (number that appears) | could be 1000
+    final int WHEEL_ROTATION_DISTANCE = 48; //Distance travelled from one wheel rotation (cm) | rounded up 15.24*pi
     final int WHEEL_ROTATION_ANGLE = 0; //Angle created with one wheel making one rotation forward while the other goes backwards
-    final int LIFT_ROTATION_TICKS = 0; //Ticks per lift motor rotation
+    final int LIFT_ROTATION_TICKS = 1440; //Ticks per lift motor rotation | could be 1000
     final int LIFT_DISTANCE = 0; //Distance up per rotation
     final int COLORHEX = 160;
 
