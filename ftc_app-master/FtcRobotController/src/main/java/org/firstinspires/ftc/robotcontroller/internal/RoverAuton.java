@@ -29,7 +29,7 @@ import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.WHEEL_R
 
 //Test class for now
 public class RoverAuton extends OpMode{
-
+    //This is being uploaded for you guys
     boolean isLeftGrey;
     boolean isRightGrey;
 
@@ -52,8 +52,6 @@ public class RoverAuton extends OpMode{
     //Driving
     DcMotor bleftWheel;
     DcMotor brightWheel;
-
-
 
     State current = State.LOWER;
     Gold locate = Gold.UNKNOWN;
