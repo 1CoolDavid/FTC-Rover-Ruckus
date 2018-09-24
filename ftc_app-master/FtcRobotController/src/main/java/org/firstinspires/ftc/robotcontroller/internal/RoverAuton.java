@@ -10,18 +10,27 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.COLORHEX;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.Gold;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.HINGE_INITIAL_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.HINGE_UNFOLD_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LIFT_DISTANCE;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LIFT_ROTATION_TICKS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LATCHED;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LEFT_SENSOR_INITIAL_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LEFT_SENSOR_UNFOLD_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.RIGHT_SENSOR_INITIAL_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.RIGHT_SENSOR_UNFOLD_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.State;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.UNLATCHED;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.WHEEL_ROTATION_ANGLE;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.WHEEL_ROTATION_DISTANCE;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.WHEEL_ROTATION_TICKS;
+
 //Test class for now
 public class RoverAuton extends OpMode{
 
-    //TODO: Servo auton - latch
-
-
-    final int WHEEL_ROTATION_TICKS = 1440; //Ticks per wheel rotation (number that appears) | could be 1000
-    final int WHEEL_ROTATION_DISTANCE = 48; //Distance travelled from one wheel rotation (cm) | rounded up 15.24*pi
-    final int WHEEL_ROTATION_ANGLE = 0; //Angle created with one wheel making one rotation forward while the other goes backwards
-    final int LIFT_ROTATION_TICKS = 1440; //Ticks per lift motor rotation | could be 1000
-    final int LIFT_DISTANCE = 0; //Distance up per rotation
-    final int COLORHEX = 160;
+    //TODO: Create Java Docs for servo methods
 
     boolean isLeftGrey;
     boolean isRightGrey;
@@ -46,22 +55,7 @@ public class RoverAuton extends OpMode{
     DcMotor bleftWheel;
     DcMotor brightWheel;
 
-    //States throughout the game
-    public enum State{
-        PARK,
-        GOLD,
-        LOWER,
-        MAKER,
-        FAILED_GOLD
-    }
 
-    //States when finding gold
-    public enum Gold{
-        LEFT,
-        MIDDLE,
-        RIGHT,
-        UNKNOWN
-    }
 
     State current = State.LOWER;
     Gold locate = Gold.UNKNOWN;
@@ -382,6 +376,54 @@ public class RoverAuton extends OpMode{
     public boolean isDriving(){
 
         return bleftWheel.isBusy() && brightWheel.isBusy();
+
+    }
+
+    public void leftColorUnfold(){
+
+        leftColor.setPosition(LEFT_SENSOR_UNFOLD_POS);
+
+    }
+
+    public void leftColorReset(){
+
+        leftColor.setPosition(LEFT_SENSOR_INITIAL_POS);
+
+    }
+
+    public void rightColorUnfold() {
+
+        rightColor.setPosition(RIGHT_SENSOR_UNFOLD_POS);
+
+    }
+
+    public void rightColorReset(){
+
+        rightColor.setPosition(RIGHT_SENSOR_INITIAL_POS);
+
+    }
+
+    public void grab(){
+
+        latch.setPosition(LATCHED);
+
+    }
+
+    public void release(){
+
+        latch.setPosition(UNLATCHED);
+
+    }
+
+    public void flyWheelsOut(){
+
+        hinge.setPosition(HINGE_UNFOLD_POS);
+
+    }
+
+    public void flyWheelsIn(){
+
+        hinge.setPosition(HINGE_INITIAL_POS);
 
     }
 }
