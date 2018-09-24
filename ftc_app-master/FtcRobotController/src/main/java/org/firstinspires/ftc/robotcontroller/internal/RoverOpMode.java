@@ -19,19 +19,19 @@ public class RoverOpMode extends OpMode {
     //TODO: Servo Controls - Latch, basket, and hinge (Assign Buttons)
 
     final static int WHEEL_ROTATION_TICKS = 1440; //Ticks per wheel rotation (number that appears) | could be 1000
-    final static int WHEEL_ROTATION_DISTANCE = 48; //Distance travelled from one wheel rotation (cm) | rounded up 15.24*pi
+    final static int WHEEL_ROTATION_DISTANCE = 19; //Distance travelled from one wheel rotation (in) | rounded up 6*pi
     final static int WHEEL_ROTATION_ANGLE = 0; //Angle created with one wheel making one rotation forward while the other goes backwards
     final static int LIFT_ROTATION_TICKS = 1440; //Ticks per lift motor rotation | could be 1000
     final static int LIFT_DISTANCE = 0; //Distance up per rotation
     final static int COLORHEX = 160;
 
     //Servo measurements
-    final static double LEFT_SENSOR_UNFOLD_POS = 0; //Left color sensor servo unfolding position
+    final static double LEFT_SENSOR_LOWER_POS = 0; //Left color sensor servo unfolding position
     final static double LEFT_SENSOR_INITIAL_POS = 0; //Left color sensor servo initial position
-    final static double RIGHT_SENSOR_UNFOLD_POS = 0; //Right color sensor servo unfolding position
+    final static double RIGHT_SENSOR_LOWER_POS = 0; //Right color sensor servo unfolding position
     final static double RIGHT_SENSOR_INITIAL_POS = 0; //Right color sensor servo initial position
     final static double HINGE_INITIAL_POS = 0; //Hinge servo initial position
-    final static double HINGE_UNFOLD_POS = 0; //Hing servo unfolded position
+    final static double HINGE_LOWER_POS = 0; //Hing servo unfolded position
     final static double LATCHED = 0; //Latching servo close measurement
     final static double UNLATCHED = 0; //Latching servo open measurement
 

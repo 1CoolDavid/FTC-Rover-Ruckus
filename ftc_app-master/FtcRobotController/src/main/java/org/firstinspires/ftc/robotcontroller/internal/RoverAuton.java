@@ -13,14 +13,14 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.COLORHEX;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.Gold;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.HINGE_INITIAL_POS;
-import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.HINGE_UNFOLD_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.HINGE_LOWER_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LEFT_SENSOR_LOWER_POS;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LIFT_DISTANCE;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LIFT_ROTATION_TICKS;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LATCHED;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LEFT_SENSOR_INITIAL_POS;
-import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.LEFT_SENSOR_UNFOLD_POS;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.RIGHT_SENSOR_INITIAL_POS;
-import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.RIGHT_SENSOR_UNFOLD_POS;
+import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.RIGHT_SENSOR_LOWER_POS;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.State;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.UNLATCHED;
 import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.WHEEL_ROTATION_ANGLE;
@@ -29,8 +29,6 @@ import static org.firstinspires.ftc.robotcontroller.internal.RoverOpMode.WHEEL_R
 
 //Test class for now
 public class RoverAuton extends OpMode{
-
-    //TODO: Create Java Docs for servo methods
 
     boolean isLeftGrey;
     boolean isRightGrey;
@@ -179,14 +177,14 @@ public class RoverAuton extends OpMode{
     }
 
     /**
-     * Drives forward a specific amount (in centimeters)
-     * @param cm is the distance requested in centimeters
+     * Drives forward a specific amount (in inches)
+     * @param in is the distance requested in inches
      * @param speed is how fast the motors will spin until distance is reached
      */
-    public void moveForward(int cm, double speed){
+    public void moveForward(int in, double speed){
 
-        int bleftTarget = getBackLeftTarget(cm);
-        int brightTarget = getBackRightTarget(cm);
+        int bleftTarget = getBackLeftTarget(in);
+        int brightTarget = getBackRightTarget(in);
 
         startDrive(bleftTarget, brightTarget, speed);
 
@@ -221,14 +219,14 @@ public class RoverAuton extends OpMode{
     }
 
     /**
-     * Lifts elevator a specific distance (in centimeters)
-     * @param cm is the distance the elevator will attempt to rise in centimeters
+     * Lifts elevator a specific distance (in inches)
+     * @param in is the distance the elevator will attempt to rise in inches
      * @param speed is how fast the motors will spin unitl distance is reached
      */
-    public void lift(int cm, double speed){
+    public void lift(int in, double speed){
 
-        int leftTarget = getLeftLiftTarget(cm);
-        int rightTarget = getRightLiftTarget(cm);
+        int leftTarget = getLeftLiftTarget(in);
+        int rightTarget = getRightLiftTarget(in);
 
         startLift(leftTarget, rightTarget, speed);
 
@@ -288,24 +286,24 @@ public class RoverAuton extends OpMode{
     /**
      * Calculates target position for back-right motor by dividing the wanted distance by the distance per
      * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
-     * @param cm is the distance it needs to travel in centimeters
+     * @param in is the distance it needs to travel in inches
      * @return the target position in reference to motor ticks
      */
-    public int getBackRightTarget(int cm){
+    public int getBackRightTarget(int in){
 
-        return ((cm/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+brightWheel.getCurrentPosition();
+        return ((in/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+brightWheel.getCurrentPosition();
 
     }
 
     /**
      * Calculates target position for back-left motor by dividing the wanted distance by the distance per
      * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
-     * @param cm is the distance it needs to travel in centimeters
+     * @param in is the distance it needs to travel in inches
      * @return the target position in reference to motor ticks
      */
-    public int getBackLeftTarget(int cm){
+    public int getBackLeftTarget(int in){
 
-        return ((cm/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+bleftWheel.getCurrentPosition();
+        return ((in/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+bleftWheel.getCurrentPosition();
 
     }
 
@@ -338,24 +336,24 @@ public class RoverAuton extends OpMode{
     /**
      * Calculates target position for "Left Slide" motor by dividing the wanted distance by the lift distance per
      * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
-     * @param cm is the distance it needs to travel in centimeters
+     * @param in is the distance it needs to travel in inches
      * @return the target position in reference to motor ticks
      */
-    public int getLeftLiftTarget(int cm){
+    public int getLeftLiftTarget(int in){
 
-        return ((cm/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+leftSlide.getCurrentPosition();
+        return ((in/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+leftSlide.getCurrentPosition();
 
     }
 
     /**
      * Calculates target position for "Right Slide" motor by dividing the wanted distance by the lift distance per
      * rotation and multiplying it be the amount of ticks per rotation. (current position added for relativity)
-     * @param cm is the distance it needs to travel in centimeters
+     * @param in is the distance it needs to travel in inches
      * @return the target position in reference to motor ticks
      */
-    public int getRightLiftTarget(int cm){
+    public int getRightLiftTarget(int in){
 
-        return ((cm/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+rightSlide.getCurrentPosition();
+        return ((in/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+rightSlide.getCurrentPosition();
 
     }
 
@@ -379,48 +377,72 @@ public class RoverAuton extends OpMode{
 
     }
 
-    public void leftColorUnfold(){
+    /**
+     * Lowers servo with left color sensor attached
+     */
+    public void leftColorLower(){
 
-        leftColor.setPosition(LEFT_SENSOR_UNFOLD_POS);
+        leftColor.setPosition(LEFT_SENSOR_LOWER_POS);
 
     }
 
+    /**
+     * Raises left servo with left color sensor to original position
+     */
     public void leftColorReset(){
 
         leftColor.setPosition(LEFT_SENSOR_INITIAL_POS);
 
     }
 
-    public void rightColorUnfold() {
+    /**
+     * Lowers servo with right color sensor attached
+     */
+    public void rightColorLower() {
 
-        rightColor.setPosition(RIGHT_SENSOR_UNFOLD_POS);
+        rightColor.setPosition(RIGHT_SENSOR_LOWER_POS);
 
     }
 
+    /**
+     * Raises servo with right color sensor attached
+     */
     public void rightColorReset(){
 
         rightColor.setPosition(RIGHT_SENSOR_INITIAL_POS);
 
     }
 
+    /**
+     * Close the latching servo
+     */
     public void grab(){
 
         latch.setPosition(LATCHED);
 
     }
 
+    /**
+     * Releases the latching servo (open)
+     */
     public void release(){
 
         latch.setPosition(UNLATCHED);
 
     }
 
+    /**
+     * Unfolds the the fly wheel mechanism
+     */
     public void flyWheelsOut(){
 
-        hinge.setPosition(HINGE_UNFOLD_POS);
+        hinge.setPosition(HINGE_LOWER_POS);
 
     }
 
+    /**
+     * Folds up the fly wheel mechanism
+     */
     public void flyWheelsIn(){
 
         hinge.setPosition(HINGE_INITIAL_POS);
