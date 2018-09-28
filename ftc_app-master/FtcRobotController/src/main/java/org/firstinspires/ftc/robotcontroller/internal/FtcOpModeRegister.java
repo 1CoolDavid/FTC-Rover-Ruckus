@@ -63,6 +63,6 @@ public class FtcOpModeRegister implements OpModeRegister {
      */
     public void register(OpModeManager manager) {
 
-        manager.register("RoverOpMode", RoverOpMode.class);
+        /*manager.register("RoverOpMode", RoverOpMode.class);*/
     }
 }
