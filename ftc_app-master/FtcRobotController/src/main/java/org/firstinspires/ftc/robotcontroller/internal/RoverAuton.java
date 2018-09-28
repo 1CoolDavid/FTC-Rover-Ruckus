@@ -122,7 +122,7 @@ public class RoverAuton extends OpMode{
             isLeftGrey = leftSensor.blue() >= COLORHEX && leftSensor.red() >= COLORHEX && leftSensor.green() >= COLORHEX;
             isRightGrey = rightSensor.blue() >= COLORHEX && rightSensor.red() >= COLORHEX  && rightSensor.green() >= COLORHEX;
 
-            locate = isLeftGrey & isRightGrey ? Gold.MIDDLE : isLeftGrey && !isRightGrey ? Gold.LEFT : !isLeftGrey && isRightGrey ? Gold.RIGHT : Gold.UNKNOWN;
+            locate = isLeftGrey && isRightGrey ? Gold.MIDDLE : isLeftGrey && !isRightGrey ? Gold.LEFT : !isLeftGrey && isRightGrey ? Gold.RIGHT : Gold.UNKNOWN;
 
             if(locate == Gold.UNKNOWN){
 

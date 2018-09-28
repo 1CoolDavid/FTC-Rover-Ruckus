@@ -149,6 +149,22 @@ public class RoverOpMode extends OpMode {
             leftFly.setPower(1);
         }
 
+        if(gamepad1.a){
+            if(latch.getPosition() == UNLATCHED)
+                latch.setPosition(LATCHED);
+            else
+                latch.setPosition(UNLATCHED);
+        }
+
+        if(gamepad1.b){
+            if(hinge.getPosition() == HINGE_INITIAL_POS)
+                hinge.setPosition(HINGE_LOWER_POS);
+            else
+                hinge.setPosition(HINGE_INITIAL_POS);
+        }
+
+        //Add basket code here ------
+
 
         //Debugging & encoder measuring purposes
         telemetry.addData("Back-Left Wheel", bleftWheel.getCurrentPosition());
