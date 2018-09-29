@@ -143,7 +143,7 @@ public class RoverAuton extends OpMode{
         else if(current == State.FAILED_GOLD){
 
         }
-        else if(current == State.MAKER){
+        else if(current == State.MARKER){
 
         }
         else if(current == State.PARK){

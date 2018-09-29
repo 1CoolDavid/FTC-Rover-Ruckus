@@ -40,7 +40,7 @@ public class RoverOpMode extends OpMode {
         PARK,
         GOLD,
         LOWER,
-        MAKER,
+        MARKER,
         FAILED_GOLD
     }
 
