@@ -19,10 +19,10 @@ public class RoverOpMode extends OpMode {
     //TODO: Servo Controls - Latch, basket, and hinge (Assign Buttons)
 
     final static int WHEEL_ROTATION_TICKS = 1440; //Ticks per wheel rotation (number that appears) | could be 1000
-    final static int WHEEL_ROTATION_DISTANCE = 19; //Distance travelled from one wheel rotation (in) | rounded up 6*pi
-    final static int WHEEL_ROTATION_ANGLE = 0; //Angle created with one wheel making one rotation forward while the other goes backwards
+    final static double WHEEL_ROTATION_DISTANCE = 18.85; //Distance travelled from one wheel rotation (in) | rounded 6*pi - could be 19
+    final static double WHEEL_ROTATION_ANGLE = 0; //Angle created with one wheel making one rotation forward while the other goes backwards
     final static int LIFT_ROTATION_TICKS = 1440; //Ticks per lift motor rotation | could be 1000
-    final static int LIFT_DISTANCE = 0; //Distance up per rotation
+    final static double LIFT_DISTANCE = 0; //Distance up per rotation
     final static int COLORHEX = 160;
 
     //Servo measurements

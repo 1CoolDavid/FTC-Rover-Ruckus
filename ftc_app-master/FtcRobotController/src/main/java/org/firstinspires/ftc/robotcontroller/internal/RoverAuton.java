@@ -289,7 +289,7 @@ public class RoverAuton extends OpMode{
      */
     public int getBackRightTarget(int in){
 
-        return ((in/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+brightWheel.getCurrentPosition();
+        return (int)(Math.round((in/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+brightWheel.getCurrentPosition());
 
     }
 
@@ -301,7 +301,7 @@ public class RoverAuton extends OpMode{
      */
     public int getBackLeftTarget(int in){
 
-        return ((in/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+bleftWheel.getCurrentPosition();
+        return (int)(Math.round((in/WHEEL_ROTATION_DISTANCE)*WHEEL_ROTATION_TICKS)+bleftWheel.getCurrentPosition());
 
     }
 
@@ -314,7 +314,7 @@ public class RoverAuton extends OpMode{
      */
     public int getLeftAngleTarget(int angle){
 
-        return ((angle/WHEEL_ROTATION_ANGLE)*WHEEL_ROTATION_TICKS)+bleftWheel.getCurrentPosition();
+        return (int)(Math.round((angle/WHEEL_ROTATION_ANGLE)*WHEEL_ROTATION_TICKS)+bleftWheel.getCurrentPosition());
 
     }
 
@@ -327,7 +327,7 @@ public class RoverAuton extends OpMode{
      */
     public int getRightAngleTarget(int angle){
 
-        return ((angle/WHEEL_ROTATION_ANGLE)*WHEEL_ROTATION_TICKS)+brightWheel.getCurrentPosition();
+        return (int)(Math.round((angle/WHEEL_ROTATION_ANGLE)*WHEEL_ROTATION_TICKS)+brightWheel.getCurrentPosition());
 
     }
 
@@ -339,7 +339,7 @@ public class RoverAuton extends OpMode{
      */
     public int getLeftLiftTarget(int in){
 
-        return ((in/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+leftSlide.getCurrentPosition();
+        return (int)(Math.round((in/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+leftSlide.getCurrentPosition());
 
     }
 
@@ -351,7 +351,7 @@ public class RoverAuton extends OpMode{
      */
     public int getRightLiftTarget(int in){
 
-        return ((in/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+rightSlide.getCurrentPosition();
+        return (int)(Math.round((in/LIFT_DISTANCE)*LIFT_ROTATION_TICKS)+rightSlide.getCurrentPosition());
 
     }
 
