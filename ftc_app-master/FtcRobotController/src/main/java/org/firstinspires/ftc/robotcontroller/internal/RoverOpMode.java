@@ -1,174 +1,94 @@
 package org.firstinspires.ftc.robotcontroller.internal;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
-
-/**
- * Created by david on 5/14/2018.
- */
-
 
 public class RoverOpMode extends OpMode {
 
-    //TODO: Servo Controls - Latch, basket, and hinge (Assign Buttons)
-
-    final static int WHEEL_ROTATION_TICKS = 1440; //Ticks per wheel rotation (number that appears) | could be 1000
-    final static double WHEEL_ROTATION_DISTANCE = 18.85; //Distance travelled from one wheel rotation (in) | rounded 6*pi - could be 19
-    final static double WHEEL_ROTATION_ANGLE = 0; //Angle created with one wheel making one rotation forward while the other goes backwards
-    final static int LIFT_ROTATION_TICKS = 1440; //Ticks per lift motor rotation | could be 1000
-    final static double LIFT_DISTANCE = 0; //Distance up per rotation
-    final static int COLORHEX = 160;
-
-    //Servo measurements
-    final static double LEFT_SENSOR_LOWER_POS = 0; //Left color sensor servo unfolding position
-    final static double LEFT_SENSOR_INITIAL_POS = 0; //Left color sensor servo initial position
-    final static double RIGHT_SENSOR_LOWER_POS = 0; //Right color sensor servo unfolding position
-    final static double RIGHT_SENSOR_INITIAL_POS = 0; //Right color sensor servo initial position
-    final static double HINGE_INITIAL_POS = 0; //Hinge servo initial position
-    final static double HINGE_LOWER_POS = 0; //Hing servo unfolded position
-    final static double LATCHED = 0; //Latching servo close measurement
-    final static double UNLATCHED = 0; //Latching servo open measurement
-
-    //States throughout the game
-    public enum State{
-        PARK,
-        GOLD,
-        LOWER,
-        MARKER,
-        FAILED_GOLD
-    }
-
-    //States when finding gold
-    public enum Gold{
-        LEFT,
-        MIDDLE,
-        RIGHT,
-        UNKNOWN
-    }
-
-    //Four Wheel Drive
-    DcMotor brightWheel;
-    DcMotor bleftWheel;
-
-    //Linear Slide
-    DcMotor leftSlide;
-    DcMotor rightSlide;
-
-
-    //Fly Wheels
+    DcMotor leftMotor;
+    DcMotor rightMotor;
     DcMotor leftFly;
     DcMotor rightFly;
+    DcMotor spool;
+    ColorSensor sensor;
+    ColorSensor sensor2;
+    Servo rightArm;
+    Servo leftArm;
+    double speed = 0.7;
 
-    //Climbing Servo
-    Servo latch;
-    Servo basket;
 
-    //Fly Wheel Hinge Servo
-    Servo hinge;
+    //Servo basket;
+
+    public void init(){
+        leftMotor = hardwareMap.dcMotor.get("left");
+        rightMotor = hardwareMap.dcMotor.get("right");
+       // leftFly = hardwareMap.dcMotor.get("Left Flywheel");
+       // rightFly = hardwareMap.dcMotor.get("Right Flywheel");
+        rightArm = hardwareMap.servo.get("rightArm");
+        leftArm = hardwareMap.servo.get("leftArm");
+        sensor = hardwareMap.colorSensor.get("sensor");
+        sensor2 = hardwareMap.colorSensor.get("sensor2");
+        //spool = hardwareMap.dcMotor.get("spool");
+        //basket = hardwareMap.servo.get("basket");
+    }
+
+    public void init_loop() {
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //spool.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //spool.setZeroPowerBehavior(BRAKE);
+    }
 
     @Override
-    public void init(){
+    public void loop(){  
 
-        brightWheel = hardwareMap.dcMotor.get("Back-Right Wheel");
-        bleftWheel = hardwareMap.dcMotor.get("Back-Left Wheel");
-
-        leftSlide = hardwareMap.dcMotor.get("Left Slide");
-        rightSlide = hardwareMap.dcMotor.get("Right slide");
-
-        leftFly = hardwareMap.dcMotor.get("Left Fly Wheel");
-        rightFly = hardwareMap.dcMotor.get("Right Fly Wheel");
-
-        latch = hardwareMap.servo.get("Climb Latch");
-        basket = hardwareMap.servo.get("Climb Basket");
-
-        hinge = hardwareMap.servo.get("Fly Wheel Hinge");
-
-    }
-
-    public void init_loop(){
-
-        //Reset Encoders
-        brightWheel.setMode(STOP_AND_RESET_ENCODER);
-        bleftWheel.setMode(STOP_AND_RESET_ENCODER);
-
-        //Park Rules (Precaution, may not be necessary)
-        bleftWheel.setZeroPowerBehavior(BRAKE);
-        brightWheel.setZeroPowerBehavior(BRAKE);
-
-        //Lift Mechanism Reset
-        leftSlide.setMode(STOP_AND_RESET_ENCODER);
-        rightSlide.setMode(STOP_AND_RESET_ENCODER);
-
-        //Park Rules (Precaution, may not be necessary)
-        leftSlide.setZeroPowerBehavior(BRAKE);
-        rightSlide.setZeroPowerBehavior(BRAKE);
-
-        //Fly Wheels Initialization
-        leftFly.setMode(RUN_WITHOUT_ENCODER);
-        rightFly.setMode(RUN_WITHOUT_ENCODER);
-
-        //Encoder Initialization
-        brightWheel.setMode(RUN_USING_ENCODER);
-        bleftWheel.setMode(RUN_USING_ENCODER);
-
-        //Encoder Initialization
-        leftSlide.setMode(RUN_USING_ENCODER);
-        rightSlide.setMode(RUN_USING_ENCODER);
-
-    }
-
-    public void loop(){
-
-        //Four Wheel Drive
-        brightWheel.setPower(gamepad1.right_stick_y * 1); //may be flipped
-        bleftWheel.setPower(gamepad1.left_stick_y * -1); //may be flipped
-
-        if(gamepad1.right_bumper){
-            rightSlide.setPower(.8);
-            leftSlide.setPower(.8);
-        }
-
-        if(gamepad1.left_bumper){
-            rightSlide.setPower(-.8);
-            leftSlide.setPower(-.8);
-        }
-
-        if(gamepad1.dpad_up){
-            rightFly.setPower(-1);
-            leftFly.setPower(-1);
-        }
-
-        if(gamepad1.dpad_down){
-            rightFly.setPower(1);
+        leftMotor.setPower(gamepad1.left_stick_y * -0.5);
+        rightMotor.setPower(gamepad1.right_stick_y * 0.5);
+        //spool.setPower(gamepad1.right_trigger);
+        //spool.setPower(gamepad1.left_trigger*-1);
+        telemetry.addData("Left Position",leftMotor.getCurrentPosition());
+        telemetry.addData("Right Position", rightMotor.getCurrentPosition());
+        while(gamepad1.a){
             leftFly.setPower(1);
+            rightFly.setPower(-1);
         }
-
-        if(gamepad1.a){
-            if(latch.getPosition() == UNLATCHED)
-                latch.setPosition(LATCHED);
-            else
-                latch.setPosition(UNLATCHED);
-        }
-
         if(gamepad1.b){
-            if(hinge.getPosition() == HINGE_INITIAL_POS)
-                hinge.setPosition(HINGE_LOWER_POS);
-            else
-                hinge.setPosition(HINGE_INITIAL_POS);
+            leftFly.setPower(0);
+            rightFly.setPower(0);
+        }
+        if(gamepad1.y){
+            speed = (speed == 0.7) ? 1 : 0.7;
+        }
+        if(gamepad1.dpad_up){
+            leftArm.setPosition(0);
+            rightArm.setPosition(.8);
+        }
+        if(gamepad1.dpad_down){
+            leftArm.setPosition(1);
+            rightArm.setPosition(0);
         }
 
-        //Add basket code here ------
 
+        telemetry.addData("left arm position", leftArm.getPosition());
+        telemetry.addData("right arm position", rightArm.getPosition());
+        telemetry.update();
 
-        //Debugging & encoder measuring purposes
-        telemetry.addData("Back-Left Wheel", bleftWheel.getCurrentPosition());
-        telemetry.addData("Back-Right Wheel", brightWheel.getCurrentPosition());
     }
+
+  /*  public int goldFound(){
+        //1 is left, 2 is middle, 3 is right
+        if(sensor.red() > sensor.blue() && sensor.red() > sensor.green() && Math.abs(sensor.green() - sensor.red()) > 10){
+            return 1;
+        }
+        if(sensor2.red() > sensor2.blue() && sensor2.red() > sensor2.green() && Math.abs(sensor2.green() - sensor2.red()) > 10){
+            return 3;
+        }
+        return 2;
+    }
+    */
 
 }
