@@ -44,7 +44,7 @@ public class SquareAuton extends OpMode {
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void loop(){
+    public void loop(){ //ai is just if statements; this is just if statements; therefore this is ai
         if(step == 0)
             driveForward(6);
         if(step == 1)
@@ -91,7 +91,6 @@ public class SquareAuton extends OpMode {
         stopMotors();
         sleep(500);
         step++;
-
     }
 
     public void goldOnLeft(){

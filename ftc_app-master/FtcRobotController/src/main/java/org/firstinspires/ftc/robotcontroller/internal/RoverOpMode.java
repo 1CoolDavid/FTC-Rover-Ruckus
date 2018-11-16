@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.io.BufferedReader;
+
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
 
 public class RoverOpMode extends OpMode {
 
@@ -13,7 +16,9 @@ public class RoverOpMode extends OpMode {
     DcMotor rightMotor;
     DcMotor leftFly;
     DcMotor rightFly;
+    DcMotor liftFlywheel;
     DcMotor spool;
+    Boolean pressed = false;
     ColorSensor sensor;
     ColorSensor sensor2;
     Servo rightArm;
@@ -26,12 +31,13 @@ public class RoverOpMode extends OpMode {
     public void init(){
         leftMotor = hardwareMap.dcMotor.get("left");
         rightMotor = hardwareMap.dcMotor.get("right");
-       // leftFly = hardwareMap.dcMotor.get("Left Flywheel");
-       // rightFly = hardwareMap.dcMotor.get("Right Flywheel");
+        leftFly = hardwareMap.dcMotor.get("Left Flywheel");
+        rightFly = hardwareMap.dcMotor.get("Right Flywheel");
         rightArm = hardwareMap.servo.get("rightArm");
         leftArm = hardwareMap.servo.get("leftArm");
         sensor = hardwareMap.colorSensor.get("sensor");
         sensor2 = hardwareMap.colorSensor.get("sensor2");
+        liftFlywheel = hardwareMap.dcMotor.get("liftFly");
         //spool = hardwareMap.dcMotor.get("spool");
         //basket = hardwareMap.servo.get("basket");
     }
@@ -39,6 +45,9 @@ public class RoverOpMode extends OpMode {
     public void init_loop() {
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftFlywheel.setZeroPowerBehavior(BRAKE);
+        leftFly.setZeroPowerBehavior(FLOAT);
+        rightFly.setZeroPowerBehavior(FLOAT);
         //spool.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //spool.setZeroPowerBehavior(BRAKE);
     }
@@ -46,32 +55,51 @@ public class RoverOpMode extends OpMode {
     @Override
     public void loop(){  
 
-        leftMotor.setPower(gamepad1.left_stick_y * -0.5);
-        rightMotor.setPower(gamepad1.right_stick_y * 0.5);
-        //spool.setPower(gamepad1.right_trigger);
-        //spool.setPower(gamepad1.left_trigger*-1);
+        leftMotor.setPower(gamepad1.left_stick_y * -speed);
+        rightMotor.setPower(gamepad1.right_stick_y * speed);
         telemetry.addData("Left Position",leftMotor.getCurrentPosition());
         telemetry.addData("Right Position", rightMotor.getCurrentPosition());
-        while(gamepad1.a){
-            leftFly.setPower(1);
-            rightFly.setPower(-1);
-        }
-        if(gamepad1.b){
-            leftFly.setPower(0);
-            rightFly.setPower(0);
-        }
+
         if(gamepad1.y){
-            speed = (speed == 0.7) ? 1 : 0.7;
+            speed = speed == 0.7 ? 0.5 : 0.7;
         }
-        if(gamepad1.dpad_up){
+
+        if(gamepad1.dpad_left){
             leftArm.setPosition(0);
             rightArm.setPosition(.8);
         }
-        if(gamepad1.dpad_down){
+
+        if(gamepad1.dpad_right){
             leftArm.setPosition(1);
             rightArm.setPosition(0);
         }
 
+        if(gamepad1.left_bumper){
+            liftFlywheel.setPower(.3);
+        }
+
+        if(gamepad1.right_bumper){
+            liftFlywheel.setPower(-.4);
+        }
+
+        if(!gamepad1.left_bumper && !gamepad1.right_bumper){
+            liftFlywheel.setPower(0);
+        }
+
+        if(gamepad1.dpad_up){
+            leftFly.setPower(1);
+            rightFly.setPower(-1);
+        }
+
+        else if(gamepad1.dpad_down){
+            leftFly.setPower(-1);
+            rightFly.setPower(1);
+        }
+
+        else{
+            leftFly.setPower(0);
+            rightFly.setPower(0);
+        }
 
         telemetry.addData("left arm position", leftArm.getPosition());
         telemetry.addData("right arm position", rightArm.getPosition());
