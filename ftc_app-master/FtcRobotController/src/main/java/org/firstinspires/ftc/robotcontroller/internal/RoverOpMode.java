@@ -18,13 +18,13 @@ public class RoverOpMode extends OpMode {
     DcMotor rightFly;
     DcMotor liftFlywheel;
     DcMotor spool;
-    boolean in = false;
-    boolean out = false;
+    boolean in;
+    boolean out;
     ColorSensor sensor;
     ColorSensor sensor2;
     Servo rightArm;
     Servo leftArm;
-    double speed = 0.7;
+    double speed = .8;
 
 
     //Servo basket;
@@ -39,6 +39,8 @@ public class RoverOpMode extends OpMode {
         sensor = hardwareMap.colorSensor.get("sensor");
         sensor2 = hardwareMap.colorSensor.get("sensor2");
         liftFlywheel = hardwareMap.dcMotor.get("liftFly");
+        boolean in =false;
+        boolean out = false;
         //spool = hardwareMap.dcMotor.get("spool");
         //basket = hardwareMap.servo.get("basket");
     }
@@ -62,12 +64,14 @@ public class RoverOpMode extends OpMode {
         telemetry.addData("Right Position", rightMotor.getCurrentPosition());
 
         if(gamepad1.b){
-            speed = speed == 0.7 ? 0.5 : 0.7;
+            speed = speed == 0.8 ? 1 : 0.8;
+            sleep(500);
         }
+        telemetry.addData("Speed", speed);
 
         if(gamepad1.dpad_left){
             leftArm.setPosition(0);
-            rightArm.setPosition(.8);
+            rightArm.setPosition(1);
         }
 
         if(gamepad1.dpad_right){
@@ -77,27 +81,39 @@ public class RoverOpMode extends OpMode {
 
         if(gamepad1.a){
             in = !in;
-            out = false;
+            if(out)
+                out=!out;
+            sleep(250);
         }
-        
-        if(gamepad1.y) {
+        if(gamepad1.y){
             out = !out;
-            in = false;
+            if(in)
+                in=!in;
+            sleep(250);
         }
+        /*if(gamepad1.dpad_up) {
+            liftFlywheel.setPower(-0.4);
+            sleep(900);
+        }*/
 
-        if(out) {
+        telemetry.addData("out", out);
+        telemetry.addData("in", in);
+
+        if(in) {
             leftFly.setPower(1);
             rightFly.setPower(-1);
         }
-
-        if(in) {
+        else if(out) {
             leftFly.setPower(-1);
             rightFly.setPower(1);
         }
-
-        if(!in && !out) {
+        else{
             leftFly.setPower(0);
             rightFly.setPower(0);
+        }
+
+        if(gamepad1.left_bumper){
+            liftFlywheel.setPower(.4);
         }
             
         if(gamepad1.right_bumper){
@@ -125,5 +141,11 @@ public class RoverOpMode extends OpMode {
         return 2;
     }
     */
-
+  public void sleep(long millis) {
+      try {
+          Thread.sleep(millis);
+      } catch (Exception e) {
+          System.out.print(e.getStackTrace());
+      }
+  }
 }

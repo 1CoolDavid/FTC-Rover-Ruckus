@@ -14,6 +14,7 @@ public class SquareAuton extends OpMode {
     int step = 0;
     Servo rightArm;
     Servo leftArm;
+    final double speed = .81;
     DcMotor leftFly;
     DcMotor rightFly;
     public DcMotor leftMotor;
@@ -45,10 +46,12 @@ public class SquareAuton extends OpMode {
     }
 
     public void loop(){ //ai is just if statements; this is just if statements; therefore this is ai
+
+
         if(step == 0)
-            driveForward(6);
+            driveForward(3);
         if(step == 1)
-            turnRight(60);
+            turnRight(90);
         if(step == 2)
             driveBackward(6);
         if(step == 3)
@@ -91,6 +94,7 @@ public class SquareAuton extends OpMode {
         stopMotors();
         sleep(500);
         step++;
+
     }
 
     public void goldOnLeft(){
@@ -138,23 +142,23 @@ public class SquareAuton extends OpMode {
 
     public void turnRight(long degrees){
         rightMotor.setPower(0);
-        rightMotor.setPower(-0.5);
-        leftMotor.setPower(0.5);
-        sleep(((long)9.2)*degrees);
+        rightMotor.setPower(-speed);
+        leftMotor.setPower(speed);
+        sleep(((long)(12.5))*degrees);
         stopMotors();
     }
 
     public void turnLeft(long degrees){
-        rightMotor.setPower(0.5);
-        leftMotor.setPower(-0.5);
-        sleep(((long)9.2)*degrees);
+        rightMotor.setPower(speed);
+        leftMotor.setPower(-speed);
+        sleep(((long)(12.5))*degrees);
         stopMotors();
     }
 
     public void driveForward(int in){
         //1 in = 34.5 milliseconds at speed 0.5
-        leftMotor.setPower(0.5);
-        rightMotor.setPower(0.5);
+        leftMotor.setPower(speed);
+        rightMotor.setPower(speed);
         sleep(30 * in); //real value 30
     }
 
@@ -166,8 +170,8 @@ public class SquareAuton extends OpMode {
 
     public void driveBackward(int in){
         //1 in = 34.5 milliseconds at speed 0.5
-        leftMotor.setPower(-0.5);
-        rightMotor.setPower(-0.5);
+        leftMotor.setPower(-speed);
+        rightMotor.setPower(-speed);
         sleep(30 * in); //real value 30
     }
 
@@ -191,8 +195,8 @@ public class SquareAuton extends OpMode {
            leftArm.setPosition(1);
        }
        if(downTwo == false){ //up
-           rightArm.setPosition(.8);
-           rightArm.setPosition(.8);
+           rightArm.setPosition(1);
+           rightArm.setPosition(1);
        }
        else{ //down
            rightArm.setPosition(0);
